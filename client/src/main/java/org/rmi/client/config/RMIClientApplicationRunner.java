@@ -119,22 +119,17 @@ public class RMIClientApplicationRunner implements ApplicationRunner {
 
     }
 
-    @Override
-    public void run(ApplicationArguments args) throws Exception {
-        // PARTIE 1 :
-        ICabinet service = (ICabinet) proxy.getObject();
-        IVeterinaire vet = new Veterinaire("hello");
-        service.SaveVeterianire(vet);
-
-        System.out.println("Bonjour bienvenue sur le site du cabinet : "+ service.getName()+" !");
-        Scanner sc = new Scanner(System.in);
-
-        System.out.println("Pour un bon fonctionnement de l'application veuillez à entrer les infos en UN mot , utilisez un '-' ou '_' si obligé !");
+    private void Whiledoer(ICabinet service, Scanner sc){
         while(true){
-            System.out.println("Veuillez choisir parmis les actions suivantes : ");
+            System.out.println("Veuillez choisir parmis les actions (1 - 6) suivantes : ");
             System.out.println("1- Ajouter un animal \n2- Supprimer un animal\n3- rechercher un animal\n4- Ajouter un animal Special\n5- Recuperer les infos d'un animal\n6- Modifier les infos d'un animal\n");
-
-            int choix = sc.nextInt();
+            int choix = 0;
+            try{
+                choix = sc.nextInt();
+            }catch (Exception e){
+                System.out.println("Erreur : veuillez entrez un chiffre entre 1 - 6 \n");
+                sc.nextLine();
+            }
             switch (choix) {
                 case 1:
                     try{
@@ -188,5 +183,21 @@ public class RMIClientApplicationRunner implements ApplicationRunner {
                     break;
             }
         }
+    }
+
+    @Override
+    public void run(ApplicationArguments args) throws Exception {
+        // PARTIE 1 :
+        ICabinet service = (ICabinet) proxy.getObject();
+        IVeterinaire vet = new Veterinaire("hello");
+        service.SaveVeterianire(vet);
+
+        System.out.println("Bonjour bienvenue sur le site du cabinet : "+ service.getName()+" !");
+        Scanner sc = new Scanner(System.in);
+
+        System.out.println("Pour un bon fonctionnement de l'application veuillez à entrer les infos en UN mot , utilisez un '-' ou '_' si obligé !");
+
+        // On effectue le while : boucle infini pour run l'application
+        Whiledoer(service,sc);
     }
 }

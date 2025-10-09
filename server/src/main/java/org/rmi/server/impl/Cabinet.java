@@ -13,7 +13,7 @@ public class Cabinet  implements ICabinet {
     private ArrayList<IAnimal> animals ;
     private ArrayList<IVeterinaire> vetos ;
     private int nbPatient = 0;
-    private final int[] SEUILS = {100, 500, 1000};
+    private final int[] SEUILS = {3, 100, 500, 1000};
 
     public Cabinet() throws RemoteException {
         this.animals = new ArrayList<>();
