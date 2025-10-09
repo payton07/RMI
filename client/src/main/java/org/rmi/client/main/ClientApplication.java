@@ -1,28 +1,40 @@
 package org.rmi.client.main;
-
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import java.security.AccessControlException;
+import java.security.AccessController;
 
-import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-// Classe principale de l'application
-@SpringBootApplication(scanBasePackages = {
-		"org.rmi.client.config" // Package pour la configuration du client
+@SpringBootApplication(scanBasePackages = {"org.rmi.client.impl", // Package pour l'implémentation du service
+		"org.rmi.client.config" // Package pour la configuration
 })
 public class ClientApplication {
 	public static void main(String[] args) {
-		if (System.getSecurityManager() != null) {
+
+		System.out.println("Security policy : "+System.getProperty("java.security.policy"));
+		if(System.getSecurityManager()==null){
 			System.setSecurityManager(new SecurityManager());
 		}
+		System.out.println("Security Manager: " + System.getSecurityManager());
 
-		String cp = System.getProperty("java.class.path");
-		Path path = Paths.get(cp.split(File.pathSeparator)[0]).toAbsolutePath();
-		String codebasePath = path.toUri().toString();
-		System.setProperty("java.rmi.server.codebase", codebasePath);
-		System.out.println("Codebase dynamique = " + codebasePath);
+		System.out.println("La codebase : "+System.getProperty("java.rmi.server.codebase"));
+		try {
+			AccessController.checkPermission(
+					new javax.management.MBeanServerPermission("findMBeanServer")
+			);
+			System.out.println("Permission JMX granted!");
+			AccessController.checkPermission(
+					new RuntimePermission("accessClassInPackage.com.sun.jmx.mbeanserver")
+			);
+			System.out.println("Permission Runtime pour JMX granted!");
+			AccessController.checkPermission(
+					new RuntimePermission("createMBeanServer")
+			);
+			System.out.println("Permission createMBeanServer granted!");
+		} catch (AccessControlException e) {
+			System.out.println("Permission JMX denied!");
+		}
 
-		SpringApplication.run(ClientApplication.class, args); // Démarre l'application Spring Boot
+		SpringApplication.run(ClientApplication.class, args);
 	}
+
 }

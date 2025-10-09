@@ -2,7 +2,6 @@ package org.rmi.commons.impl;
 import org.rmi.commons.interfaces.ISpecies;
 import java.io.Serializable;
 
-
 public class Species implements Serializable, ISpecies {
     private String nom;
     private int lifespan;

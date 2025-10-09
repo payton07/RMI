@@ -1,13 +1,15 @@
 package org.rmi.commons.interfaces;
-import java.rmi.Remote;
-import java.rmi.RemoteException;
 
-public interface IAnimal extends Remote {
-    String getCompletName() throws RemoteException;
-    String getMasterName() throws RemoteException;
-    ITrackingFile getTrackingFile() throws RemoteException;
-    ISpecies getSpecie() throws RemoteException;
-    String getName() throws RemoteException;
-    String getRace() throws RemoteException;
-    void Alert(String message) throws RemoteException;
+import java.rmi.Remote;
+
+public interface IAnimal {
+    String getCompletName();
+    String getMasterName();
+    ITrackingFile getTrackingFile();
+    ISpecies getSpecie();
+    String getName();
+    String getRace();
+    void setName(String name);
+    void setRace(String race);
+    void setMasterName(String masterName);
 }

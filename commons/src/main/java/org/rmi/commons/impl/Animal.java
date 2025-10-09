@@ -3,57 +3,73 @@ package org.rmi.commons.impl;
 import org.rmi.commons.interfaces.IAnimal;
 import org.rmi.commons.interfaces.ISpecies;
 import org.rmi.commons.interfaces.ITrackingFile;
-
+import java.io.Serializable;
 import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
 
-public class Animal extends UnicastRemoteObject implements IAnimal {
+public class Animal implements IAnimal, Serializable {
     private String name;
     private String masterName;
     private ISpecies specie;
     private String race;
     private ITrackingFile trackingFile;
 
-    public Animal(String name, String masterName, ISpecies specie, String race, ITrackingFile trackingFile) throws RemoteException {
-        super();
+    public Animal(String name, String masterName, ISpecies specie, String race) throws RemoteException {
         this.name = name;
         this.masterName = masterName;
         this.race = race;
-        this.specie = new Species("Chien",12);
-        this.trackingFile = new TrackingFile("Le chien pour l'instant il a rien");
+        this.specie = specie;
+        this.trackingFile = new TrackingFile("Tracking File is empty");
     }
 
-    public String getCompletName() throws RemoteException{
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setMasterName(String masterName) {
+        this.masterName = masterName;
+    }
+
+    public void setSpecie(ISpecies specie) {
+        this.specie = specie;
+    }
+
+    public void setRace(String race) {
+        this.race = race;
+    }
+
+    public void setTrackingFile(String trackingFile) throws RemoteException {
+        this.trackingFile.setFileContent(trackingFile);
+    }
+
+    public String getCompletName() {
         return name+" "+masterName;
     }
 
     @Override
-    public String getName() throws RemoteException  {
+    public String getName() {
         return name;
     }
 
     @Override
-    public String getMasterName() throws RemoteException {
+    public String getMasterName(){
         return masterName;
     }
 
-    public String getRace() throws RemoteException {
+    public String getRace() {
         return race;
     }
 
     @Override
-    public Species getSpecie() throws RemoteException {
+    public Species getSpecie() {
         return  new Species(this.specie.getName(),this.specie.getLifeSpan());
     }
 
     @Override
-    public ITrackingFile getTrackingFile() throws RemoteException {
+    public ITrackingFile getTrackingFile() {
         return this.trackingFile;
-
     }
 
-    @Override
-    public void Alert(String message) throws RemoteException {
-        System.out.println("Alert : "+ message);
+    public String toString(){
+        return "L'animal  "+this.name+" a pour maitre  "+this.masterName+", est de la  race "+this.race+" et de l'espece : "+this.specie.getName();
     }
 }

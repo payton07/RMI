@@ -1,16 +1,13 @@
 package org.rmi.client.config;
-import org.rmi.client.OtherAnim;
-import org.rmi.commons.impl.Animal;
-import org.rmi.commons.impl.Species;
-import org.rmi.commons.impl.TrackingFile;
-import org.rmi.commons.interfaces.IAnimal;
-import org.rmi.commons.interfaces.ICabinet;
-import org.rmi.commons.interfaces.ISpecies;
-import org.rmi.commons.interfaces.ITrackingFile;
+import org.rmi.client.impl.AnimalSpecial;
+import org.rmi.commons.impl.Veterinaire;
+import org.rmi.commons.interfaces.*;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.remoting.rmi.RmiProxyFactoryBean;
 import org.springframework.stereotype.Component;
 import org.springframework.boot.ApplicationArguments;
+
+import java.util.Scanner;
 
 @Component
 public class RMIClientApplicationRunner implements ApplicationRunner {
@@ -20,87 +17,176 @@ public class RMIClientApplicationRunner implements ApplicationRunner {
         this.proxy = proxy;
     }
 
-    @Override
-    public void run(ApplicationArguments args) throws Exception {
-        // PARTIE 1 :
-/*
-                // Récupération de l'instance de IAnimal via le proxy :
-                IAnimal service = (IAnimal) proxy.getObject();
+    private String enregisterAnimal(Scanner sc,ICabinet service,int opt) throws Exception {
+        System.out.println("\t Veuillez entrer le nom de l'animal  \n");
+        String nom = sc.next();
+        System.out.println("\t Veuillez entrer le nom de son maitre \n");
+        String maitre = sc.next();
+        System.out.println("\t Veuillez entrer sa race \n");
+        String race = sc.next();
+        System.out.println("\t Veuillez entrer son  espece \n");
+        String espece = sc.next();
+        System.out.println("\t Veuillez entrer le temps de vie moyen de cette espece \n");
+        int temps = sc.nextInt();
+        String response = "";
+        if(opt==0){
+            response = service.addAnimal(nom,maitre,race,espece,temps);
+        }
+        else if(opt==1){
+            IAnimal animalSpe = new AnimalSpecial(nom,maitre,race,espece,temps);
+            response = service.addAnimalForCodeBase(animalSpe);
+        }
+        return response;
+    }
 
-                // Invocation de la methode getCompleName de la classe Animal : Nom complet de l'animal
-                System.out.println(service.getCompletName());
+    private String supprimerAnimal(Scanner sc,ICabinet service) throws Exception {
+        System.out.println("Veuillez entrer le nom de l'animal  \n");
+        String nom = sc.next();
+        return service.deleteAnimal(nom);
+    }
 
-                // Affichage du suivi medical :
+    private String rechercherAnimal(Scanner sc,ICabinet service) throws Exception {
+        System.out.println("Veuiller entrer le nom de l'animal \n");
+        String nom = sc.next();
+        String response = "";
+        IAnimal animal = service.recherche(nom);
+        if(animal != null){
+            response = animal.toString();
+        }
+        else {
+            response = "Aucun animal ayant ce nom n'a été enregistrer dans ce cabinet \n";
+        }
+        return response;
+    }
 
-                TrackingFile track =  service.getTrackingFile(); // Recuperation du suivi medical par reference
-                System.out.println("Suivi medical : "+ track.getFileContent());
-                track.setFileContent("Nouveau suivi medical "); // Ici je modifie le dossier de suiv de l'animal
-                System.out.println("Suivi medical  apres set: "+ track.getFileContent());
+    private void RecupererInfos(Scanner sc,ICabinet service) throws Exception {
+        System.out.println("Veuillez entrer le nom de l'animal\n");
+        String nom = sc.next();
+        IAnimal response = service.recherche(nom);
+        System.out.println("1- Nom \n2- Nom du maitre \n3- La race \n4- L'espece \n5- Dossier de suivi\nAutre - pour tout voir\n");
+        int casee = sc.nextInt();
+        switch (casee){
+            case 1:
+                System.out.println("Le nom est : "+response.getName());
+                break;
+            case 2:
+                System.out.println("Nom du maitre est : "+response.getMasterName());
+                break;
+            case 3:
+                System.out.println("La race  est : "+response.getRace());
+                break;
+            case 4:
+                System.out.println("L'espece est : "+response.getSpecie().toString());
+                break;
+            case 5:
+                System.out.println("Le dossier de suivi est : "+response.getTrackingFile().getFileContent());
+                break;
+            default:
+                System.out.println("Le nom est : "+response.getName()+"\nNom du maitre est : "+response.getMasterName()+"\nLa race  est : "+response.getRace()+"\nL'espece est : "+response.getSpecie().getName()+"\nDossier de suivi : "+response.getTrackingFile().getFileContent());
+                break;
+        }
+    }
 
-                // FIn suivi medical :
+    private void ModifierInfos(Scanner sc,ICabinet service) throws Exception {
+        System.out.println("Veuillez entrer le nom de l'animal \n");
+        String nom = sc.next();
+        IAnimal response = service.recherche(nom);
+        if(response != null){
+            System.out.println("1- Nom \n2- Nom du maitre \n3- Dossier de suivi");
+            int casee = sc.nextInt();
+            switch (casee){
+                case 1:
+                    System.out.println("Entrez le nouveau nom (En un mot avec '-' si obligé) : ");
+                    String nvNom = sc.next();
+                    System.out.println(service.setAnimalname(nom, nvNom));
+                    break;
+                case 2:
+                    System.out.println("Entrez le nom du nouveau maitre (En un mot avec '-' si obligé) : ");
+                    String nvmaitre = sc.next();
+                    service.setAnimalMastername(nom, nvmaitre);
+                    break;
+                case 3:
+                    System.out.println("Entrez le nouveau contenu du dossier : ");
+                    String nvcontenu = sc.nextLine();
+                    service.setTrackingFile(nom,nvcontenu);
+                    break;
 
-                System.out.println("Suivi medical last: "+ track.getFileContent());
-
-                // Recuperation de l'espece :
-
-                Species species = service.getSpecie(); // Recupere l'espece de l'animal
-                System.out.println("L'espece de l'animal : "+service.getCompletName()+" est : "+species.getName()+ " et vie en moyenne "+species.getLifeSpan()+" ans");
-*/
-        // PARTIE 2 + 3:
-
-        ICabinet service = (ICabinet) proxy.getObject();
-        System.out.println("le nom du cabinet : "+ service.getName());
-
-        // Creation de nouveaux patients + Recherche de patients
-
-        ISpecies species1 =  new Species("Chien",12);
-        ITrackingFile trackingFile1 = new TrackingFile("La trackingfile est vide");
-        IAnimal animal1 = new Animal("Chien","Moi1",species1,"Berger Allemand",trackingFile1);
-
-        ISpecies species2 = new Species("Chat",12);
-        ITrackingFile trackingFile2 = new TrackingFile("La trackingfile est vide");
-        IAnimal animal2 = new Animal("Chat","Moi2",species2,"Le Bengal",trackingFile2);
-
-
-        // Ajout de patient :
-        service.addAnimal(animal1);
-        service.addAnimal(animal2);
-
-        System.out.println("le nom du patient1 creé : "+ animal1.getName());
-        System.out.println("le nom du patient2 creé : "+ animal2.getName());
-
-        IAnimal patient1 = service.getAnimal(0);
-        IAnimal patient2 = service.recherche("Chien");
-
-        System.out.println("animal1 :"+patient1.toString());
-        System.out.println("animal2 :"+patient2.toString());
-
-        // Modifions le dossier d'un animal creé :
-        System.out.println("Dossier animal1 avant modif : "+ animal1.getTrackingFile().getFileContent());
-        animal1.getTrackingFile().setFileContent("Cet animal est ajour sur ces vaccins");
-
-        // verifions la modification
-        System.out.println("Dossier animal1 apres modif: "+ animal1.getTrackingFile().getFileContent());
-
-
-      // PARTIE 4 : CODEBASE
-        ISpecies species3 =  new Species("Hibou",12);
-        ITrackingFile trackingFile3 = new TrackingFile("La trackingfile est vide");
-        IAnimal animal3 = new OtherAnim("Hibou","Moi3","Oiseau",species3,trackingFile3);
-
-        // Ajout pour la codebase: Pour ça j'ai crée la classe OtherAnim, pas connu par le serveur
-        service.addAnimal( animal3);
-
-        IAnimal patient3 = service.recherche("Hibou");
-        System.out.println("animal3 :"+patient3.toString());
-
-        // Les Alertes
-
-        for(int i = 0;i<100;i++){
-            IAnimal animal4 = new Animal("Chat","Moi2",species2,"Le Bengal",trackingFile2);
-            service.addAnimal(animal4);
+            }
+        }
+        else {
+            System.out.println("L'animal n'existe pas \n");
         }
 
     }
 
+    @Override
+    public void run(ApplicationArguments args) throws Exception {
+        // PARTIE 1 :
+        ICabinet service = (ICabinet) proxy.getObject();
+        IVeterinaire vet = new Veterinaire("hello");
+        service.SaveVeterianire(vet);
+
+        System.out.println("Bonjour bienvenue sur le site du cabinet : "+ service.getName()+" !");
+        Scanner sc = new Scanner(System.in);
+
+        System.out.println("Pour un bon fonctionnement de l'application veuillez à entrer les infos en UN mot , utilisez un '-' ou '_' si obligé !");
+        while(true){
+            System.out.println("Veuillez choisir parmis les actions suivantes : ");
+            System.out.println("1- Ajouter un animal \n2- Supprimer un animal\n3- rechercher un animal\n4- Ajouter un animal Special\n5- Recuperer les infos d'un animal\n6- Modifier les infos d'un animal\n");
+
+            int choix = sc.nextInt();
+            switch (choix) {
+                case 1:
+                    try{
+                        System.out.println("\n"+enregisterAnimal(sc,service,0));
+                    }
+                    catch(Exception e){
+                        System.out.println("Erreur lors de l'ajout de l'animal. Veuiller reessayer ! \n");
+                    }
+                    break;
+                case 2:
+                    try{
+                        System.out.println("\n"+supprimerAnimal(sc,service));
+                    }
+                    catch (Exception e){
+                        System.out.println("Erreur lors de la suppression de l'animal. Veuiller reessayer ! \n");
+                    }
+                    break;
+                case 3:
+                    try {
+                        System.out.println("\n"+rechercherAnimal(sc,service));
+                    }catch (Exception e){
+                        System.out.println("Veuillez reesayer votre recherche \n");
+                    }
+                    break;
+                case 4:
+                    try{
+                        System.out.println("\n"+enregisterAnimal(sc,service,1));
+                    }
+                    catch(Exception e){
+                        System.out.println(e.getMessage());
+                        System.out.println("Erreur lors de l'ajout de l'animal. Veuiller reessayer ! \n");
+                    }
+                    break;
+                case 5: // Recuperer infos de l'animal
+                    try {
+                        RecupererInfos(sc,service);
+                    }
+                    catch (Exception e){
+                        System.out.println("Erreur de recuperation. Veuiller reessayer ! \n");
+                    }
+                    break;
+                case 6:
+                    try {
+                        ModifierInfos(sc,service);
+                    }
+                    catch (Exception e){
+                        System.out.println("Erreur lors de la modification. Veuiller reessayer ! \n");
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
 }

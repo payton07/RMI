@@ -10,14 +10,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.remoting.rmi.RmiServiceExporter;
 
 @Component
-public class RmiServerapplicationRunner implements ApplicationRunner {
+public class RmiServerApplicationRunner implements ApplicationRunner {
     // private Animal animal;
     private Logger logger = Logger.getLogger(this.getClass().getName());
 
 
     private ICabinet cabinet;
 
-    public RmiServerapplicationRunner( Cabinet cabinet) {
+    public RmiServerApplicationRunner(Cabinet cabinet) {
         // this.animal = animal;
          this.cabinet = cabinet;
     }

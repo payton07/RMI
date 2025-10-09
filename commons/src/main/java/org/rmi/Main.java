@@ -1,4 +1,4 @@
-package org.rmi.commons;
+package org.rmi;
 
 public class Main {
     public static void main(String[] args) {
