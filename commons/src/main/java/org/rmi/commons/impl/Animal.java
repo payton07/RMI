@@ -70,6 +70,6 @@ public class Animal implements IAnimal, Serializable {
     }
 
     public String toString(){
-        return "L'animal  "+this.name+" a pour maitre  "+this.masterName+", est de la  race "+this.race+" et de l'espece : "+this.specie.getName();
+        return "L'animal  "+this.name+" a pour maitre  "+this.masterName+", est de la  race "+this.race+" et de l'espece : "+this.specie.getName()+"\n\n";
     }
 }

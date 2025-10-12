@@ -54,7 +54,7 @@ public class RMIClientApplicationRunner implements ApplicationRunner {
             response = animal.toString();
         }
         else {
-            response = "Aucun animal ayant ce nom n'a été enregistrer dans ce cabinet \n";
+            response = "Aucun animal ayant ce nom n'a été enregistrer dans ce cabinet \n\n";
         }
         return response;
     }
@@ -63,7 +63,8 @@ public class RMIClientApplicationRunner implements ApplicationRunner {
         System.out.println("Veuillez entrer le nom de l'animal\n");
         String nom = sc.next();
         IAnimal response = service.recherche(nom);
-        System.out.println("1- Nom \n2- Nom du maitre \n3- La race \n4- L'espece \n5- Dossier de suivi\nAutre - pour tout voir\n");
+        System.out.println("Choisissez parmis les options suivantes : \n");
+        System.out.println("1- Nom \n2- Nom du maitre \n3- La race \n4- L'espece \n5- Dossier de suivi\nAutre - Toutes les infos\n");
         int casee = sc.nextInt();
         switch (casee){
             case 1:
@@ -79,10 +80,10 @@ public class RMIClientApplicationRunner implements ApplicationRunner {
                 System.out.println("L'espece est : "+response.getSpecie().toString());
                 break;
             case 5:
-                System.out.println("Le dossier de suivi est : "+response.getTrackingFile().getFileContent());
+                System.out.println("Le dossier de suivi est : "+response.getTrackingFile().getFileContent()+"\n\n");
                 break;
             default:
-                System.out.println("Le nom est : "+response.getName()+"\nNom du maitre est : "+response.getMasterName()+"\nLa race  est : "+response.getRace()+"\nL'espece est : "+response.getSpecie().getName()+"\nDossier de suivi : "+response.getTrackingFile().getFileContent());
+                System.out.println("Le nom est : "+response.getName()+"\nNom du maitre est : "+response.getMasterName()+"\nLa race  est : "+response.getRace()+"\nL'espece est : "+response.getSpecie().getName()+"\nDossier de suivi : "+response.getTrackingFile().getFileContent()+"\n\n");
                 break;
         }
     }
@@ -92,23 +93,25 @@ public class RMIClientApplicationRunner implements ApplicationRunner {
         String nom = sc.next();
         IAnimal response = service.recherche(nom);
         if(response != null){
-            System.out.println("1- Nom \n2- Nom du maitre \n3- Dossier de suivi");
+            System.out.println("Choisissez parmis les options suivantes : \n");
+            System.out.println("1- Nom \n2- Nom du maitre \n3- Dossier de suivi\n");
             int casee = sc.nextInt();
             switch (casee){
                 case 1:
                     System.out.println("Entrez le nouveau nom (En un mot avec '-' si obligé) : ");
                     String nvNom = sc.next();
-                    System.out.println(service.setAnimalname(nom, nvNom));
+                    System.out.println(service.setAnimalname(nom, nvNom)+"\n\n");
                     break;
                 case 2:
                     System.out.println("Entrez le nom du nouveau maitre (En un mot avec '-' si obligé) : ");
                     String nvmaitre = sc.next();
-                    service.setAnimalMastername(nom, nvmaitre);
+                    System.out.println(service.setAnimalMastername(nom, nvmaitre)+"\n\n");
                     break;
                 case 3:
-                    System.out.println("Entrez le nouveau contenu du dossier : ");
+                    System.out.println("Entrez le nouveau contenu du dossier de suivi: \n");
+                    sc.nextLine(); // vide le scanner
                     String nvcontenu = sc.nextLine();
-                    service.setTrackingFile(nom,nvcontenu);
+                    System.out.println(service.setTrackingFile(nom,nvcontenu)+"\n\n");
                     break;
 
             }
